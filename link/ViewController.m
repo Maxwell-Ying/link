@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) BOOL isPlaying;
 @property (nonatomic, strong) UIAlertController *alert;
+@property (nonatomic, strong) UIView *barView;
 
 @end
 
@@ -25,13 +26,31 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.gameView = [[MyGameView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.alert = [UIAlertController alertControllerWithTitle:@"Game Over" message:@"Success" preferredStyle:UIAlertControllerStyleAlert];
+    
+    CGRect gameRect = [UIScreen mainScreen].bounds;
+    gameRect.size.height -= 30;
+    self.gameView = [[MyGameView alloc] initWithFrame:gameRect];
     self.gameView.gameService = [[MyGameService alloc] init];
     self.gameView.delegate = self;
     self.gameView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.gameView];
-    [self startGame];
     
+    CGRect barRect = [UIScreen mainScreen].bounds;
+    barRect.size.height = 30;
+    barRect.origin.y = gameRect.size.height;
+    self.barView = [[UIView alloc] initWithFrame:barRect];
+    self.barView.backgroundColor = [UIColor redColor];
+    
+    UIButton *startButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    startButton.frame  = CGRectMake(30, 0, 70, 30);
+    startButton.layer.cornerRadius = 10;
+    startButton.backgroundColor = [UIColor greenColor];
+    [startButton setTitle:@"start" forState:UIControlStateNormal];
+    [startButton addTarget:self action:@selector(startGame) forControlEvents:UIControlEventTouchUpInside];
+    [self.barView addSubview:startButton];
+    [self.view addSubview:self.barView];
+    NSLog(@"%@", [NSValue valueWithCGRect:self.barView.frame]);
     // Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -59,14 +78,14 @@
     if (self.leftTime < 0) {
         [self.timer invalidate];
         self.isPlaying = NO;
-        //
+        
         return;
     }
 }
 
 - (void)checkWin:(MyGameView *)gameView {
     if (![gameView.gameService hasPieces]) {
-        //
+        [self presentViewController:self.alert animated:YES completion:nil];
         [self.timer invalidate];
         self.isPlaying =NO;
     }

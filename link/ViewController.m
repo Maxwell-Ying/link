@@ -30,7 +30,7 @@
     self.gameView.delegate = self;
     self.gameView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.gameView];
-    
+    [self startGame];
     
     // Do any additional setup after loading the view, typically from a nib.
 }

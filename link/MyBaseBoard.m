@@ -9,13 +9,11 @@
 #import "MyBaseBoard.h"
 #import "MyGameImage.h"
 #import "MyGamePiece.h"
+#import "MyImageUtil.h"
+
 @implementation MyBaseBoard
 
 -(NSArray *) createPieces:(NSArray *)pieces {
-    return nil;
-}
-
-NSArray <MyGameImage *>* getPlayImage(NSUInteger count) {
     return nil;
 }
 
@@ -31,7 +29,7 @@ NSArray <MyGameImage *>* getPlayImage(NSUInteger count) {
     
     NSArray *notNullPieces = [self createPieces:pieces];
     
-    NSArray <MyGameImage *>*playImage = getPlayImage(notNullPieces.count);
+    NSArray <MyGameImage *>*playImage = getplayImages(notNullPieces.count);
     
     int imageWidth = playImage[0].image.size.width;
     int imageHeight = playImage[0].image.size.height;

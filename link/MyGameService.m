@@ -8,6 +8,7 @@
 
 #import "MyGameService.h"
 #import "MyFullBoard.h"
+#import "MyGamePoint.h"
 
 @implementation MyGameService
 
@@ -66,7 +67,153 @@
 }
 
 - (MyLinkInfo *) linkWithBeginPiece:(MyGamePiece *)begin endPiece:(MyGamePiece *)end {
-    return [[MyLinkInfo alloc] init];
+    if (begin == end) {
+        return nil;
+    }
+    if (![begin isEqual:end]) {
+        return nil;
+    }
+    if (end.indexX < begin.indexX) {
+        return [self linkWithBeginPiece:end endPiece:begin];
+    }
+    
+    MyGamePoint *beginPoint = [begin getCenter];
+    MyGamePoint *endPoint = [end getCenter];
+    if (begin.indexY == end.indexY) {
+        if (![self isXBlockFromBegin:beginPoint toEnd:endPoint]) {
+            return [[MyLinkInfo alloc] initWithP1:beginPoint P2:endPoint];
+        }
+    }
+    if (begin.indexX == end.indexX) {
+        if (![self isYBlockFromBegin:beginPoint toEnd:endPoint]) {
+            return [[MyLinkInfo alloc] initWithP1:beginPoint P2:endPoint];
+        }
+    }
+    
+    MyGamePoint *cornerPoint = [self getCornerPointFromBegin:beginPoint toEnd:endPoint];
+    if (cornerPoint) {
+        return [[MyLinkInfo alloc] initWithP1:beginPoint P2:cornerPoint P3:endPoint];
+    }
+    
+    NSDictionary *turns = [self getLinkPointsFromBegin:beginPoint toEnd:endPoint];
+    if (turns.count) {
+        return [self getShortCutFromPoint:beginPoint toPoint:endPoint turns:turns distance:[self getDistanceFromPoint:beginPoint toPoint:endPoint]];
+    }
+    return nil;
+}
+
+- (NSArray *)getLeftChannelFromPoint:(MyGamePoint *)point min:(NSInteger)min {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = point.X - 30; i >= min; i = i - 30) {
+        if ([self findPieceAtTouchX:i touchY:point.Y]) {
+            return result;
+        }
+        [result addObject:[[MyGamePoint alloc] initWithX:i Y:point.Y]];
+    }
+    return result;
+}
+
+- (NSArray *)getRightChannelFromPoint:(MyGamePoint *)point max:(NSInteger)max {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = point.X + 30; i <= max; i = i + 30) {
+        if ([self findPieceAtTouchX:i touchY:point.Y]) {
+            return result;
+        }
+        [result addObject:[[MyGamePoint alloc] initWithX:i Y:point.Y]];
+    }
+    return result;
+}
+
+
+- (NSArray *)getUpChannelFromPoint:(MyGamePoint *)point min:(NSInteger)min {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = point.Y - 30; i >= min; i = i - 30) {
+        if ([self findPieceAtTouchX:point.X touchY:i]) {
+            return result;
+        }
+        [result addObject:[[MyGamePoint alloc] initWithX:point.X Y:i]];
+    }
+    return result;
+}
+
+
+- (NSArray *)getDownChannelFromPoint:(MyGamePoint *)point max:(NSInteger)max {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSInteger i = point.Y + 30; i <= max; i = i + 30) {
+        if ([self findPieceAtTouchX:point.X touchY:i]) {
+            return result;
+        }
+        [result addObject:[[MyGamePoint alloc] initWithX:point.X Y:i]];
+    }
+    return result;
+}
+
+- (MyGamePiece *)getPieceAtX:(CGFloat)X Y:(CGFloat)Y {
+    return [self findPieceAtTouchX:(NSInteger)X touchY:(NSInteger)Y];
+}
+
+- (BOOL) isXBlockFromBegin:(MyGamePoint *)begin toEnd:(MyGamePoint *)end {
+    return YES;
+}
+
+- (BOOL) isYBlockFromBegin:(MyGamePoint *)begin toEnd:(MyGamePoint *)end {
+    return YES;
+}
+
+- (MyGamePoint *)getCornerPointFromBegin:(MyGamePoint *)begin toEnd:(MyGamePoint *)end {
+    return [[MyGamePoint alloc] init];
+}
+
+- (NSDictionary *)getLinkPointsFromBegin:(MyGamePoint *)begin toEnd:(MyGamePoint *)end {
+    return [[NSDictionary alloc] init];
+}
+
+
+
+
+- (MyLinkInfo *)getShortCutFromPoint:(MyGamePoint *)begin toPoint:(MyGamePoint *)end turns:(NSDictionary *)turns distance:(NSInteger)shortDistance {
+    NSMutableArray *infos = [[NSMutableArray alloc] init];
+    
+    for (MyGamePoint *point1 in turns) {
+        MyGamePoint *point2 = turns[point1];
+        [infos addObject:[[MyLinkInfo alloc] initWithP1:begin P2:point1 P3:point2 P4:end]];
+    }
+    return [self getShortCut:infos shortDistance:shortDistance];
+}
+
+- (MyLinkInfo *)getShortCut:(NSArray *)infos shortDistance:(NSInteger)shortDistance {
+    NSInteger temp = 0;
+    MyLinkInfo *result = nil;
+    for (int i = 0; i < infos.count; i++) {
+        MyLinkInfo *info = infos[i];
+        
+        NSInteger distance = [self countAll:info.points];
+        if (i == 0) {
+            temp = distance - shortDistance;
+            result = info;
+        }
+        if (distance - shortDistance < temp) {
+            temp = distance - shortDistance;
+            result = info;
+        }
+    }
+    return result;
+}
+
+- (NSInteger) countAll:(NSArray *)points {
+    NSInteger result = 0;
+    for (int i = 0; i < points.count - 1; i++) {
+        MyGamePoint *point1 = points[i];
+        MyGamePoint *point2 = points[i + 1];
+        result += [self getDistanceFromPoint:point1 toPoint:point2];
+    }
+    return result;
+}
+
+- (NSInteger)getDistanceFromPoint:(MyGamePoint *)from toPoint:(MyGamePoint *)to {
+    NSInteger xDistance = abs((int)(from.X - to.X));
+    NSInteger yDistance = abs((int)(from.Y - to.Y));
+    return xDistance + yDistance;
 }
 
 @end

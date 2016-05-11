@@ -11,8 +11,18 @@
 
 @implementation MyGameService
 
+- (instancetype) init {
+    if ([super init]) {
+        self.xSize = 10;
+        self.ySize = 10;
+    }
+    return self;
+}
+
 - (void)start {
     MyFullBoard *board = [[MyFullBoard alloc] init];
+    board.xSize = self.xSize;
+    board.ySize = self.ySize;
     
     self.pieces = [board create];
 }
@@ -32,8 +42,8 @@
     if (touchX < 0 || touchY < 0) {
         return nil;
     }
-    NSInteger indexX = [self getIndexWithRelateive:touchX size:20];
-    NSInteger indexY = [self getIndexWithRelateive:touchY size:20];
+    NSInteger indexX = [self getIndexWithRelateive:touchX size:30];
+    NSInteger indexY = [self getIndexWithRelateive:touchY size:30];
     
     if (indexX < 0 || indexY < 0) {
         return nil;

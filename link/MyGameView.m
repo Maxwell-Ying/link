@@ -18,7 +18,7 @@
 
 - (instancetype) initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.selectedImage = [UIImage imageNamed:@"select.png"];
+        self.selectedImage = [UIImage imageNamed:@"selected.png"];
         
         self.bubbleColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bubble.png"]];
     }

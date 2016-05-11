@@ -10,6 +10,9 @@
 
 @interface MyBaseBoard : NSObject
 
+@property (nonatomic, assign) NSInteger xSize;
+@property (nonatomic, assign) NSInteger ySize;
+
 -(NSArray *) createPieces:(NSArray *)pieces;
 -(NSArray *) create;
 

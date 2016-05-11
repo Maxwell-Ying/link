@@ -13,15 +13,23 @@
 
 @implementation MyBaseBoard
 
+-(instancetype)init {
+    if ([super init]) {
+        self.xSize = 10;
+        self.ySize = 10;
+    }
+    return self;
+}
+
 -(NSArray *) createPieces:(NSArray *)pieces {
     return nil;
 }
 
 -(NSArray *) create {
     NSMutableArray * pieces = [[NSMutableArray alloc] init];
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < self.xSize; i++) {
         NSMutableArray *arr = [[NSMutableArray alloc] init];
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < self.ySize; j++) {
             [arr addObject:[NSObject new]];
         }
         [pieces addObject:arr];

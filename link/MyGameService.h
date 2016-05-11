@@ -12,6 +12,9 @@
 
 @interface MyGameService : NSObject
 
+@property (nonatomic, assign) NSInteger xSize;
+@property (nonatomic, assign) NSInteger ySize;
+
 @property (nonatomic, strong) NSArray *pieces;
 
 - (void) start;

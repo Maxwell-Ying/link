@@ -62,6 +62,8 @@
 - (void) drawLine:(MyLinkInfo *)linkInfo context:(CGContextRef)ctx {
     NSArray *points = linkInfo.points;
     MyGamePoint *firstPoint = points[0];
+    CGContextSetLineWidth(ctx, 5);
+    CGContextSetRGBStrokeColor(ctx, 0.5, 0.4, 0.7, 0.4);
     CGContextMoveToPoint(ctx, firstPoint.X, firstPoint.Y);
     for (int i = 1; i < points.count; i++) {
         MyGamePoint *currentPoint = points[i];

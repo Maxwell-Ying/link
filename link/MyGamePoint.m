@@ -18,4 +18,8 @@
     return self;
 }
 
+- (BOOL)isEqual:(MyGamePoint *)object {
+    return self.X == object.X && self.Y == object.Y;
+}
+
 @end

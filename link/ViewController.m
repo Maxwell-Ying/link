@@ -94,11 +94,11 @@
 - (void)refreshView {
     //
     self.time.text = [NSString stringWithFormat:@"left time : %ld", self.leftTime];
-    if (self.leftTime < self.maxPieces / 3.0) {
-        self.progress.progressTintColor = [UIColor orangeColor];
-    }
-    else if (self.leftTime < self.maxPieces / 6.0) {
+    if (self.leftTime < self.maxPieces / 6.0) {
         self.progress.progressTintColor = [UIColor redColor];
+    }
+    else if (self.leftTime < self.maxPieces / 3.0) {
+        self.progress.progressTintColor = [UIColor orangeColor];
     }
     [self.progress setProgress:((self.leftTime * 2.0) / self.maxPieces) animated:YES];
     self.leftTime--;
